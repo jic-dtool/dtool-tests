@@ -21,9 +21,9 @@ test_data_specifications = [
 
 
 def name_from_dataspec(dataspec):
-    return "{}-{}-byte-files".format(
-        dataspec.size_in_bytes,
-        dataspec.num_files
+    return "{}-files-{}-bytes-in-size".format(
+        dataspec.num_files,
+        dataspec.size_in_bytes
     )
 
 
