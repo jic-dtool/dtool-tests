@@ -2,14 +2,30 @@
 
 import os
 import shutil
+import time
+from collections import namedtuple
 
 from dtoolcore import (
     generate_admin_metadata,
     generate_proto_dataset,
 )
 
-def generate_dataset(name, size, num_files, output_dir):
+TestDataSpec = namedtuple("TestDataSpec", ["size_in_bytes", "num_files"])
 
+test_data_specifications = [
+    TestDataSpec(1000, 1000),
+    TestDataSpec(1000000, 1),
+]
+
+
+def name_from_dataspec(dataspec):
+    return "{}-{}-byte-files".format(
+        dataspec.size_in_bytes,
+        dataspec.num_files
+    )
+
+
+def generate_dataset(name, size, num_files, output_dir):
     admin_metadata = generate_admin_metadata(
         name=name,
         creator_username="testing-bot"
@@ -31,7 +47,12 @@ def generate_dataset(name, size, num_files, output_dir):
 
         proto_dataset.add_item_metadata(fname, "number", i)
 
+    start = time.time()
     proto_dataset.freeze()
+    elapsed = time.time() - start
+
+    print("Freezing {}: {}s".format(name, elapsed))
+
 
 def main():
 
@@ -40,19 +61,15 @@ def main():
         shutil.rmtree(output_dir)
     os.mkdir(output_dir)
 
-    generate_dataset(
-        name="many_small",
-        size=1000,  # Kilobyte
-        num_files=1000,
-        output_dir=output_dir
-    )
+    for dataspec in test_data_specifications:
+        name = name_from_dataspec(dataspec)
+        generate_dataset(
+            name=name,
+            size=dataspec.size_in_bytes,
+            num_files=dataspec.num_files,
+            output_dir=output_dir
+        )
 
-    generate_dataset(
-        name="one_large",
-        size=1000000,  # Megabyte
-        num_files=1,
-        output_dir=output_dir
-    )
 
 if __name__ == "__main__":
     main()
