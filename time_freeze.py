@@ -54,7 +54,7 @@ def generate_dataset(prefix, storage, name, size, num_files):
     proto_dataset.freeze()
     elapsed = time.time() - start
 
-    print("Freezing {}: {}s".format(name, elapsed))
+    print("Freezing {} took: {}s".format(name, elapsed))
 
 
 @click.command()
