@@ -38,6 +38,7 @@ def generate_dataset(prefix, storage, name, size, num_files):
         storage
     )
     proto_dataset.create()
+    proto_dataset.put_readme("")
 
     data_dir = proto_dataset._storage_broker._data_abspath
     for i in range(num_files):
