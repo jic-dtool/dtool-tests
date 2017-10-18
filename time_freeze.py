@@ -4,6 +4,7 @@ import os
 import time
 from collections import namedtuple
 import tempfile
+import cProfile
 
 import click
 
@@ -15,8 +16,16 @@ from dtoolcore import (
 TestDataSpec = namedtuple("TestDataSpec", ["size_in_bytes", "num_files"])
 
 test_data_specifications = [
-    TestDataSpec(1000, 1000),
-    TestDataSpec(1000000, 1),
+    TestDataSpec(10, 1),
+    TestDataSpec(10, 5),
+    TestDataSpec(10, 10),
+    TestDataSpec(10, 25),
+    TestDataSpec(10, 50),
+    TestDataSpec(10, 100),
+    TestDataSpec(10, 500),
+    TestDataSpec(10, 1000),
+#   TestDataSpec(1000, 1000),
+#   TestDataSpec(1000000, 1),
 ]
 
 
@@ -28,6 +37,11 @@ def name_from_dataspec(dataspec):
 
 
 def generate_dataset(prefix, storage, name, size, num_files):
+#   print(
+#       "Generating dataset in {} with {} files of size {} bytes".format(
+#           storage, num_files, size
+#       )
+#   )
     admin_metadata = generate_admin_metadata(
         name=name,
         creator_username="testing-bot"
@@ -51,10 +65,12 @@ def generate_dataset(prefix, storage, name, size, num_files):
             proto_dataset.add_item_metadata(handle, "number", i)
 
     start = time.time()
+#   cProfile.runctx("proto_dataset.freeze()", {"proto_dataset": proto_dataset}, {}, sort="cumtime")
     proto_dataset.freeze()
     elapsed = time.time() - start
 
-    print("Freezing {} took: {}s".format(name, elapsed))
+#   print("Freezing {} took: {}s".format(name, elapsed))
+    print("{},{}".format(num_files, elapsed))
 
 
 @click.command()
