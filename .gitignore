@@ -1,6 +1,7 @@
 *.txt
 *.csv
 *.swp
+*.png
 
 datasets
 copy
