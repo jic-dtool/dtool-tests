@@ -19,11 +19,11 @@ test_data_specifications = [
     TestDataSpec(10, 1),
     TestDataSpec(10, 5),
     TestDataSpec(10, 10),
-    TestDataSpec(10, 25),
-    TestDataSpec(10, 50),
-    TestDataSpec(10, 100),
-    TestDataSpec(10, 500),
-    TestDataSpec(10, 1000),
+#    TestDataSpec(10, 25),
+#    TestDataSpec(10, 50),
+#    TestDataSpec(10, 100),
+#    TestDataSpec(10, 500),
+#    TestDataSpec(10, 1000),
 #   TestDataSpec(1000, 1000),
 #   TestDataSpec(1000000, 1),
 ]
@@ -36,7 +36,7 @@ def name_from_dataspec(dataspec):
     )
 
 
-def generate_dataset(prefix, storage, name, size, num_files):
+def generate_dataset(base_uri, name, size, num_files):
 #   print(
 #       "Generating dataset in {} with {} files of size {} bytes".format(
 #           storage, num_files, size
@@ -48,13 +48,11 @@ def generate_dataset(prefix, storage, name, size, num_files):
     )
     proto_dataset = generate_proto_dataset(
         admin_metadata,
-        prefix,
-        storage
+        base_uri
     )
     proto_dataset.create()
     proto_dataset.put_readme("")
 
-    data_dir = proto_dataset._storage_broker._data_abspath
     for i in range(num_files):
         handle = "{}.txt".format(i)
 
@@ -74,15 +72,13 @@ def generate_dataset(prefix, storage, name, size, num_files):
 
 
 @click.command()
-@click.argument("prefix", default=".")
-@click.argument("storage", default="file")
-def main(prefix, storage):
+@click.argument("base_uri", default=".")
+def main(base_uri):
 
     for dataspec in test_data_specifications:
         name = name_from_dataspec(dataspec)
         generate_dataset(
-            prefix=prefix,
-            storage=storage,
+            base_uri=base_uri,
             name=name,
             size=dataspec.size_in_bytes,
             num_files=dataspec.num_files,
